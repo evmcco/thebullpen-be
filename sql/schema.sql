@@ -26,7 +26,24 @@ create table holdings
 );
 
 --securities
-
+create table securities
+(
+  security_id VARCHAR(50) primary key,
+  isin VARCHAR(12),
+  cusip VARCHAR(9),
+  sedol VARCHAR(7),
+  insitution_security_id VARCHAR(50),
+  institution_id VARCHAR(50),
+  proxy_security_id VARCHAR(50),
+  name VARCHAR(150),
+  ticker_symbol VARCHAR(150),
+  is_cash_equivalent boolean,
+  type VARCHAR(100),
+  close_price numeric,
+  close_price_as_of VARCHAR(150),
+  iso_currency_code VARCHAR(10),
+  unofficial_currency_code VARCHAR(50)
+)
 
 --transactions
 create table investment_transactions
