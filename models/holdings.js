@@ -9,6 +9,25 @@ class Holdings {
       return err.message;
     }
   }
+
+  static async saveHoldings(holdings, user_id) {
+    db.tx(t => {
+      const queries = holdings.map(holding => {
+        return t.none(`insert into holdings 
+        (security_id, institution_price, institution_value, cost_basis, quantity, user_id) 
+        values (${security_id}, ${institution_price}, ${institution_value}, ${cost_basis}, ${quantity}, ${user_id})`
+          , holding);
+      });
+      console.log(`QUERIES, ${queries}`)
+      return t.batch(queries);
+    })
+      .then(data => {
+        return true
+      })
+      .catch(error => {
+        return error.message
+      });
+  }
 }
 
 module.exports = Holdings;
