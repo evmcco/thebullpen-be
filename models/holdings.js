@@ -5,7 +5,7 @@ const plaidSample = require('../plaidSample.json')
 class Holdings {
   static async getHoldingsByUser(userId) {
     try {
-      const response = await db.any(`select * from holdings h join securities s on h.security_id = s.security_id where user_id = ${userId}`);
+      const response = await db.any(`select h.*, s.* from holdings h join securities s on h.security_id = s.security_id and h.user_id = s.user_id where h.user_id = ${userId}`);
       return response;
     } catch (err) {
       return err.message;
@@ -17,10 +17,9 @@ class Holdings {
     holdings.forEach(holding => {
       holding.user_id = user_id
     })
-    console.log('user_id', user_id)
     db.tx(t => {
       const queries = holdings.map(holding => {
-        return t.none('insert into holdings (security_id, institution_price, institution_value, cost_basis, quantity, user_id) values (${security_id}, ${institution_price}, ${institution_value}, ${cost_basis}, ${quantity}, ${user_id})'
+        return t.none('insert into holdings (user_id, account_id, security_id, institution_price, institution_price_as_of, institution_value, cost_basis, quantity, iso_currency_code, unofficial_currency_code) values (${user_id}, ${account_id}, ${security_id}, ${institution_price}, ${institution_price_as_of}, ${institution_value}, ${cost_basis}, ${quantity}, ${iso_currency_code}, ${unofficial_currency_code})'
           , holding);
       });
       return t.batch(queries);

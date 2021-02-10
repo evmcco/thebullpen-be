@@ -8,8 +8,8 @@ router.get("/user/:userId", async (req, res, next) => {
 });
 
 router.post("/save", async (req, res, next) => {
-  console.log(req.body)
   const saveResponse = await holdingsModel.saveHoldings(Number(req.body.userId));
   res.json(saveResponse).status(200);
 })
+
 module.exports = router;

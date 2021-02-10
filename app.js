@@ -36,7 +36,7 @@ app.use(cors(corsOptions));
 app.use("/users", usersRouter);
 app.use("/holdings", holdingsRouter);
 app.use("/plaid", plaidRouter)
-// app.use("/securities", securitiesRouter);
+app.use("/securities", securitiesRouter);
 
 
 module.exports = app;
