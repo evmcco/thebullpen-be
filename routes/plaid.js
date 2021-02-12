@@ -46,7 +46,7 @@ router.post('/create_link_token', function (request, response, next) {
       // This should correspond to a unique id for the current user.
       client_user_id: request.body.user_id || 'userid',
     },
-    client_name: 'Plaid Quickstart',
+    client_name: 'The Bullpen',
     products: PLAID_PRODUCTS,
     country_codes: PLAID_COUNTRY_CODES,
     language: 'en',
@@ -74,7 +74,6 @@ router.post('/set_access_token', function (request, response, next) {
     }
     ACCESS_TOKEN = tokenResponse.access_token;
     ITEM_ID = tokenResponse.item_id;
-    prettyPrintResponse(tokenResponse);
     response.json({
       access_token: ACCESS_TOKEN,
       item_id: ITEM_ID,
@@ -91,7 +90,7 @@ router.get('/holdings', function (request, response, next) {
         error,
       });
     }
-    prettyPrintResponse(holdingsResponse);
+    // prettyPrintResponse(holdingsResponse);
     response.json({ error: null, holdings: holdingsResponse });
   });
 });

@@ -3,23 +3,23 @@ const db = require("./conn.js");
 const plaidSample = require('../plaidSample.json')
 
 class Holdings {
-  static async getHoldingsByUser(userId) {
+  static async getHoldingsByUser(username) {
     try {
-      const response = await db.any(`select h.*, s.* from holdings h join securities s on h.security_id = s.security_id and h.user_id = s.user_id where h.user_id = ${userId}`);
+      const response = await db.any(`select h.*, s.* from holdings h join securities s on h.security_id = s.security_id and h.username = s.username where h.username = '${username}'`);
       return response;
     } catch (err) {
       return err.message;
     }
   }
 
-  static async saveHoldings(user_id, holdings = plaidSample.holdings.holdings) {
+  static async saveHoldings(username, holdings = plaidSample.holdings.holdings) {
     // add user_id to each holding object
     holdings.forEach(holding => {
-      holding.user_id = user_id
+      holding.username = username
     })
     db.tx(t => {
       const queries = holdings.map(holding => {
-        return t.none('insert into holdings (user_id, account_id, security_id, institution_price, institution_price_as_of, institution_value, cost_basis, quantity, iso_currency_code, unofficial_currency_code) values (${user_id}, ${account_id}, ${security_id}, ${institution_price}, ${institution_price_as_of}, ${institution_value}, ${cost_basis}, ${quantity}, ${iso_currency_code}, ${unofficial_currency_code})'
+        return t.none('insert into holdings (username, account_id, security_id, institution_price, institution_price_as_of, institution_value, cost_basis, quantity, iso_currency_code, unofficial_currency_code) values (${username}, ${account_id}, ${security_id}, ${institution_price}, ${institution_price_as_of}, ${institution_value}, ${cost_basis}, ${quantity}, ${iso_currency_code}, ${unofficial_currency_code})'
           , holding);
       });
       return t.batch(queries);

@@ -3,7 +3,7 @@ const router = express.Router();
 const securitiesModel = require("../models/securities");
 
 router.post("/save", async (req, res, next) => {
-  const saveResponse = await securitiesModel.saveSecurities(Number(req.body.userId));
+  const saveResponse = await securitiesModel.saveSecurities(req.body.username);
   res.json(saveResponse).status(200);
 })
 
