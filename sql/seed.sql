@@ -1,8 +1,9 @@
-insert into users
-  (auth0userid, username)
+insert into usernames
+  (username)
 values
-  ('auth0|1jsdfhkjsy823hiuafh', 'evmcco'),
-  ('auth0|2jhasdfkjhasiauf489', 'dirkdiggler');
+  ('evmcco'),
+  ('vchang'),
+  ('philleotardo');
 
 insert into securities
   (username, security_id, name, ticker_symbol)
@@ -12,7 +13,7 @@ values
   ('evmcco', 'c', 'ARK Web ETF', 'ARKW'),
   ('evmcco', 'd', 'Gamestop', 'GME'),
   ('vchang', 'e', 'AMC Entertainment Holdings', 'AMC'),
-  ('PhilLeotardo', 'f', 'NIO EV CN CO', 'NIO');
+  ('philleotardo', 'f', 'NIO EV CN CO', 'NIO');
 
 insert into holdings
   (username, security_id, institution_price, institution_value, cost_basis, quantity)
@@ -22,5 +23,5 @@ VALUES
   ('evmcco', 'c', 51.29, 153.75, 53.77, 3),
   ('evmcco', 'd', 63.20, 63.20, 233.75, 1),
   ('vchang', 'e', 743.32, 14863.42, 723.54, 20),
-  ('PhilLeotardo', 'f', 7.134523, 14.39834573, 8.34753475, 2.34573);
+  ('philleotardo', 'f', 7.134523, 14.39834573, 8.34753475, 2.34573);
 

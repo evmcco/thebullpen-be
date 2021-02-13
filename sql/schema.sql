@@ -1,8 +1,15 @@
+--usernames
+create table usernames
+(
+  username VARCHAR(100) primary key
+)
+
 --securities
 create table securities
 (
   security_id VARCHAR(50) primary key,
   username VARCHAR(50),
+  foreign key(username) references usernames(username),
   isin VARCHAR(12),
   cusip VARCHAR(9),
   sedol VARCHAR(7),
@@ -24,6 +31,7 @@ create table holdings
 (
   id serial primary key,
   username VARCHAR(50),
+  foreign key(username) references usernames(username),
   account_id VARCHAR(50),
   security_id VARCHAR(50),
   institution_price numeric,
@@ -40,7 +48,7 @@ create table investment_transactions
 (
   investment_transaction_id VARCHAR(150) primary key,
   username VARCHAR(50),
-  foreign key (username) references users(username),
+  foreign key(username) references usernames(username),
   cancel_transaction_id VARCHAR(150),
   account_id VARCHAR(150),
   security_id VARCHAR(150),
@@ -62,7 +70,7 @@ create table plaid_items
 (
   item_id varchar(50) primary key,
   username VARCHAR(50),
-  foreign key(username) references users(username),
+  foreign key(username) references usernames(username),
   institution_id varchar(50),
   webhook varchar(50),
   error text,
@@ -76,7 +84,7 @@ create table plaid_accounts
 (
   account_id varchar(150) primary key,
   username VARCHAR(50),
-  foreign key(username) references users(username),
+  foreign key(username) references usernames(username),
   balances text,
   mask varchar(4),
   name varchar(150),

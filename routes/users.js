@@ -12,20 +12,15 @@ var auth0 = new ManagementClient({
   scope: 'read:users update:users update:users_app_metadata'
 });
 
-router.get("/all", async (req, res, next) => {
-  const allAccounts = await usersModel.getAllUsers();
-  res.json(allAccounts).status(200);
+router.post("/username/save", async (req, res, next) => {
+  const response = await usersModel.saveUsername(req.body.username);
+  res.json(response).status(200);
 });
 
-// router.get("/setupData", async (req, res, next) => {
-//   const response = await usersModel.getUserSetupData(req.body.auth0UserId)
-//   res.json(response).status(200);
-// })
-
-// router.post("/save_auth0_user_id", async (req, res, next) => {
-//   const response = await usersModel.saveAuth0UserId(req.body.userId)
-//   res.json(response).status(200);
-// })
+router.get("/username/exists/:username", async (req, res, next) => {
+  const usernameExists = await usersModel.doesUsernameExist(req.params.username);
+  res.json(usernameExists).status(200);
+});
 
 router.post("/update_user_metadata", async (req, res, next) => {
   const params = { id: req.body.userId }
