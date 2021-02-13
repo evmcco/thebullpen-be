@@ -9,6 +9,7 @@ const plaid = require('plaid');
 const securitiesModel = require("../models/securities");
 const holdingsModel = require("../models/holdings");
 
+const { savePlaidResponseLogs } = require("../savePlaidResponse")
 
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
 const PLAID_ENV = process.env.PLAID_ENV || 'sandbox';
@@ -109,7 +110,8 @@ router.post('/request/holdings', function (request, response, next) {
     // prettyPrintResponse(holdingsResponse);
     // response.json({ error: null, holdings: holdingsResponse });
     console.log(holdingsResponse)
-    //TODO send securities object to sec model and holdings object to hold model
+    //save json from Plaid
+    savePlaidResponseLogs(holdingsResponse, request.body.username, "holdingsGet")
     const holdingsSaveResponse = await holdingsModel.saveHoldings(request.body.username, holdingsResponse.holdings);
     const securitiesSaveResponse = await securitiesModel.saveSecurities(request.body.username, holdingsResponse.securities);
     response.json({ securitiesResponse: securitiesSaveResponse, holdingsResponse: holdingsSaveResponse }).status(200)

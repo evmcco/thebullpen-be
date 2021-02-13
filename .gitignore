@@ -1,2 +1,4 @@
 .env
 plaidSample.json
+plaidResponses
+node_modules

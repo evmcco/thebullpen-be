@@ -8,7 +8,7 @@ create table usernames
 create table securities
 (
   security_id VARCHAR(50) primary key,
-  username VARCHAR(50),
+  username VARCHAR(50) not null,
   foreign key(username) references usernames(username),
   isin VARCHAR(12),
   cusip VARCHAR(9),
@@ -18,8 +18,8 @@ create table securities
   proxy_security_id VARCHAR(50),
   name VARCHAR(150),
   ticker_symbol VARCHAR(150),
-  is_cash_equivalent boolean,
-  type VARCHAR(100),
+  is_cash_equivalent boolean not null,
+  type VARCHAR(100) not null,
   close_price numeric,
   close_price_as_of VARCHAR(150),
   iso_currency_code VARCHAR(10),
@@ -30,15 +30,15 @@ create table securities
 create table holdings
 (
   id serial primary key,
-  username VARCHAR(50),
+  username VARCHAR(50) not null,
   foreign key(username) references usernames(username),
-  account_id VARCHAR(50),
-  security_id VARCHAR(50),
-  institution_price numeric,
+  account_id VARCHAR(50) not null,
+  security_id VARCHAR(50) not null,
+  institution_price numeric not null,
   institution_price_as_of VARCHAR(50),
-  institution_value numeric,
+  institution_value numeric not null,
   cost_basis numeric,
-  quantity numeric,
+  quantity numeric not null,
   iso_currency_code VARCHAR(10),
   unofficial_currency_code VARCHAR(50)
 );
