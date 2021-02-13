@@ -36,7 +36,10 @@ router.post("/update_user_metadata", async (req, res, next) => {
   if (!!req.body.username) {
     metadata.username = req.body.username
   }
-  console.log(metadata)
+  //TODO save username to usernames table in DB
+  if (Object.entries(metadata).length === 0) {
+    res.json({ message: "no username or access_token submitted" }).status(200)
+  }
   auth0.updateUserMetadata(params, metadata, function (err, user) {
     if (err) {
       res.json(err).status(200)

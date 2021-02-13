@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
-
 require('dotenv').config()
 
 const moment = require('moment');
 const util = require('util');
 const plaid = require('plaid');
+
+const securitiesModel = require("../models/securities");
+const holdingsModel = require("../models/holdings");
+
 
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
 const PLAID_ENV = process.env.PLAID_ENV || 'sandbox';
@@ -93,6 +96,26 @@ router.get('/holdings', function (request, response, next) {
     // prettyPrintResponse(holdingsResponse);
     response.json({ error: null, holdings: holdingsResponse });
   });
+});
+
+router.post('/request/holdings', function (request, response, next) {
+  client.getHoldings(request.body.plaid_access_token, async function (error, holdingsResponse) {
+    if (error != null) {
+      prettyPrintResponse(error);
+      return response.json({
+        error,
+      });
+    }
+    // prettyPrintResponse(holdingsResponse);
+    // response.json({ error: null, holdings: holdingsResponse });
+    console.log(holdingsResponse)
+    //TODO send securities object to sec model and holdings object to hold model
+    const holdingsSaveResponse = await holdingsModel.saveHoldings(request.body.username, holdingsResponse.holdings);
+    const securitiesSaveResponse = await securitiesModel.saveSecurities(request.body.username, holdingsResponse.securities);
+    response.json({ securitiesResponse: securitiesSaveResponse, holdingsResponse: holdingsSaveResponse }).status(200)
+  });
+
+
 });
 
 router.get('/investment_transactions', function (request, response, next) {
