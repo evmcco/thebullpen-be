@@ -4,9 +4,6 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const jwt = require('express-jwt');
-const jwtAuthz = require('express-jwt-authz');
-const jwksRsa = require('jwks-rsa');
 
 const usersRouter = require("./routes/users");
 const holdingsRouter = require("./routes/holdings");
@@ -24,23 +21,6 @@ const corsOptions = {
   "Access-Control-Allow-Headers":
     "Origin, X-Requested-With, Content-Type, Accept"
 };
-
-const checkJwt = jwt({
-  // Dynamically provide a signing key
-  // based on the kid in the header and 
-  // the signing keys provided by the JWKS endpoint.
-  secret: jwksRsa.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: `https://thebullpen.app/.well-known/jwks.json`
-  }),
-
-  // Validate the audience and the issuer.
-  audience: 'YOUR_API_IDENTIFIER',
-  issuer: `https://thebullpen.app/`,
-  algorithms: ['RS256']
-});
 
 const app = express();
 
