@@ -2,7 +2,7 @@
 create table usernames
 (
   username VARCHAR(100) primary key
-)
+);
 
 --securities
 create table securities
@@ -24,7 +24,7 @@ create table securities
   close_price_as_of VARCHAR(150),
   iso_currency_code VARCHAR(10),
   unofficial_currency_code VARCHAR(50)
-)
+);
 
 --holdings
 create table holdings

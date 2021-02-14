@@ -4,7 +4,7 @@ const plaidSample = require('../plaidSample.json')
 
 class Securities {
   static async saveSecurities(username, securities = plaidSample.holdings.securities) {
-    // add user_id to each holding object
+    // add username to each holding object
     securities.forEach(security => {
       security.username = username
     })

@@ -1,4 +1,5 @@
 // database connection parameters
+require('dotenv').config()
 
 const pgp = require("pg-promise")({
   query: e => {
@@ -7,7 +8,7 @@ const pgp = require("pg-promise")({
 });
 
 const options = {
-  host: "localhost",
+  host: process.env.DATABASE_URL,
   database: "thebullpen"
 };
 
