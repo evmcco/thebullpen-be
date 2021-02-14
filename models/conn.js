@@ -8,7 +8,7 @@ const pgp = require("pg-promise")({
 });
 
 const options = process.env.DATABSE_URL || {
-  host: localhost,
+  host: "localhost",
   database: "thebullpen"
 };
 
