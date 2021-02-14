@@ -7,9 +7,10 @@ const pgp = require("pg-promise")({
   }
 });
 
-const options = process.env.DATABASE_URL || {
+const options = process.env.DATABASE_URL + '?ssl=true' || {
   host: "localhost",
-  database: "thebullpen"
+  database: "thebullpen",
+  ssl: true
 };
 
 const db = pgp(options);
