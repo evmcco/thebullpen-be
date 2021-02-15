@@ -15,7 +15,6 @@ const options = process.env.DATABASE_URL ? {
 } : {
     host: "localhost",
     database: "thebullpen",
-    ssl: true
   };
 
 const db = pgp(options);
