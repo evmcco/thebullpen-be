@@ -23,6 +23,7 @@ router.get("/username/exists/:username", async (req, res, next) => {
 });
 
 router.post("/update_user_metadata", async (req, res, next) => {
+  console.log("USER METADATA BODY", req.body)
   const params = { id: req.body.userId }
   const metadata = {}
   if (!!req.body.plaid_access_token) {
@@ -33,11 +34,11 @@ router.post("/update_user_metadata", async (req, res, next) => {
   }
   //TODO save username to usernames table in DB
   if (Object.entries(metadata).length === 0) {
-    res.json({ message: "no username or access_token submitted" }).status(200)
+    res.json({ message: "no username or access_token submitted" }).status(400)
   }
   auth0.updateUserMetadata(params, metadata, function (err, user) {
     if (err) {
-      res.json(err).status(200)
+      res.json(err).status(400)
     }
     res.json(user).status(200)
   })
