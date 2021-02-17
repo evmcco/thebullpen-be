@@ -87,7 +87,7 @@ router.post('/set_access_token', function (request, response, next) {
 });
 
 router.get('/holdings', function (request, response, next) {
-  client.getHoldings(ACCESS_TOKEN, function (error, holdingsResponse) {
+  client.getHoldings(request.body.plaid_access_token, function (error, holdingsResponse) {
     if (error != null) {
       prettyPrintResponse(error);
       return response.json({
@@ -111,7 +111,7 @@ router.post('/request/holdings', function (request, response, next) {
     // response.json({ error: null, holdings: holdingsResponse });
     console.log(holdingsResponse)
     //save json from Plaid
-    savePlaidResponseLogs(holdingsResponse, request.body.username, "holdingsGet")
+    // savePlaidResponseLogs(holdingsResponse, request.body.username, "holdingsGet")
     const holdingsSaveResponse = await holdingsModel.saveHoldings(request.body.username, holdingsResponse.holdings);
     const securitiesSaveResponse = await securitiesModel.saveSecurities(request.body.username, holdingsResponse.securities);
     response.json({ securitiesResponse: securitiesSaveResponse, holdingsResponse: holdingsSaveResponse }).status(200)
@@ -124,7 +124,7 @@ router.get('/investment_transactions', function (request, response, next) {
   const startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
   const endDate = moment().format('YYYY-MM-DD');
   client.getInvestmentTransactions(
-    ACCESS_TOKEN,
+    request.body.plaid_access_token,
     startDate,
     endDate,
     function (error, investmentTransactionsResponse) {
