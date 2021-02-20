@@ -6,6 +6,11 @@ values
   ('philleotardo'),
   ('aulebron');
 
+insert into plaid_access_tokens
+  (username, access_token)
+values
+  ('evmcco', 'access-development-5c3751d6-00d1-4787-896c-12f8a0e60470');
+
 insert into securities
   (username, security_id, name, ticker_symbol, is_cash_equivalent, type)
 values
@@ -25,4 +30,6 @@ VALUES
   ('aulebron', 'd', 63.20, 63.20, 233.75, 1, 'b'),
   ('vchang', 'e', 743.32, 14863.42, 723.54, 20, 'c'),
   ('philleotardo', 'f', 7.134523, 14.39834573, 8.34753475, 2.34573, 'd');
+
+
 

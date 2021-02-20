@@ -19,6 +19,23 @@ class Users {
     }
   }
 
+  static async saveAccessToken(body) {
+    console.log(body)
+    try {
+      const response = await db.one('insert into plaid_access_tokens (username, access_token) values ($1, $2)', [body.username, body.plaid_access_token])
+    } catch (err) {
+      return err.message
+    }
+  }
+
+  static async getAccessTokens(username) {
+    try {
+      const response = await db.any('select access_token from plaid_access_tokens where username = ($1)', username)
+      return response
+    } catch (err) {
+      return err.message
+    }
+  }
 
 }
 

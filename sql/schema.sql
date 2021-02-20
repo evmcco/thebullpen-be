@@ -4,6 +4,13 @@ create table usernames
   username VARCHAR(100) primary key
 );
 
+--plaid_access_tokens
+create table plaid_access_tokens
+(
+  username VARCHAR(100),
+  access_token VARCHAR(100)
+);
+
 --securities
 create table securities
 (

@@ -109,7 +109,7 @@ router.post('/request/holdings', function (request, response, next) {
     }
     // prettyPrintResponse(holdingsResponse);
     // response.json({ error: null, holdings: holdingsResponse });
-    console.log(holdingsResponse)
+    // console.log(holdingsResponse)
     //save json from Plaid
     // savePlaidResponseLogs(holdingsResponse, request.body.username, "holdingsGet")
     const holdingsSaveResponse = await holdingsModel.saveHoldings(request.body.username, holdingsResponse.holdings);
