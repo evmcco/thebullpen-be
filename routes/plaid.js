@@ -107,14 +107,13 @@ router.post('/request/holdings', function (request, response, next) {
         error,
       });
     }
-    // prettyPrintResponse(holdingsResponse);
-    // response.json({ error: null, holdings: holdingsResponse });
-    // console.log(holdingsResponse)
-    //save json from Plaid
-    // savePlaidResponseLogs(holdingsResponse, request.body.username, "holdingsGet")
+    //delete old holdings/securities, then save new ones
+    const holdingsDeleteResponse = await holdingsModel.deleteHoldings(request.body.username)
+    const securitiesDeleteResponse = await securitiesModel.deleteSecurities(request.body.username)
+
     const holdingsSaveResponse = await holdingsModel.saveHoldings(request.body.username, holdingsResponse.holdings);
     const securitiesSaveResponse = await securitiesModel.saveSecurities(request.body.username, holdingsResponse.securities);
-    response.json({ securitiesResponse: securitiesSaveResponse, holdingsResponse: holdingsSaveResponse }).status(200)
+    response.json({ holdingsDeleteResponse, securitiesDeleteResponse, securitiesSaveResponse, holdingsSaveResponse }).status(200)
   });
 
 

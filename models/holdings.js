@@ -5,7 +5,7 @@ const plaidSample = require('../plaidSample.json')
 class Holdings {
   static async getHoldingsByUser(username) {
     try {
-      const response = await db.any(`select h.*, s.* from holdings h join securities s on h.security_id = s.security_id and h.username = s.username where h.username = '${username}'`);
+      const response = await db.any('select h.*, s.* from holdings h join securities s on h.security_id = s.security_id and h.username = s.username where h.username = ($1)', username);
       return response;
     } catch (err) {
       return err.message;
@@ -30,6 +30,15 @@ class Holdings {
       .catch(error => {
         return error.message
       });
+  }
+
+  static async deleteHoldings(username) {
+    try {
+      const response = await db.none('delete from holdings where username = ($1)', username)
+      return response
+    } catch (err) {
+      return err.message;
+    }
   }
 }
 
