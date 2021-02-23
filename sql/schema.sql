@@ -49,6 +49,14 @@ create table holdings
   unofficial_currency_code VARCHAR(50)
 );
 
+--webhooks
+create table plaid_webhooks
+(
+  id serial primary key,
+  webhook_json jsonb,
+  date_sent timestamp
+)
+
 --transactions
 create table investment_transactions
 (

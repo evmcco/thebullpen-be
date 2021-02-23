@@ -8,6 +8,7 @@ const plaid = require('plaid');
 
 const securitiesModel = require("../models/securities");
 const holdingsModel = require("../models/holdings");
+const webhooksModel = require("../models/webhooks")
 
 const { savePlaidResponseLogs } = require("../savePlaidResponse")
 
@@ -115,9 +116,15 @@ router.post('/request/holdings', function (request, response, next) {
     const securitiesSaveResponse = await securitiesModel.saveSecurities(request.body.username, holdingsResponse.securities);
     response.json({ holdingsDeleteResponse, securitiesDeleteResponse, securitiesSaveResponse, holdingsSaveResponse }).status(200)
   });
-
-
 });
+
+router.post('/webhook', function (request, response, next) {
+  const saveResponse = await saveWebhook(request.body)
+  //TODO get username & access_token via item_id from webhook, then run delete/save job
+  if (saveResponse == true) {
+    response.status(200)
+  }
+})
 
 router.get('/investment_transactions', function (request, response, next) {
   const startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
