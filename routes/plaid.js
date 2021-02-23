@@ -122,7 +122,7 @@ router.post('/webhook', async function (request, response, next) {
   const saveResponse = await webhooksModel.saveWebhook(request.body)
   //TODO get username & access_token via item_id from webhook, then run delete/save job
   if (saveResponse == true) {
-    response.status(200)
+    response.sendStatus(200)
   }
 })
 
