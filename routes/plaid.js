@@ -116,7 +116,7 @@ router.post('/request/holdings', function (request, response, next) {
 });
 
 router.post('/webhook', async function (request, response, next) {
-  if (request.body.webhook_type == 'HOLDINGS' && request.body.webhook_code == 'DEFAULT UPDATE') {
+  if (request.body.webhook_type == 'HOLDINGS' && request.body.webhook_code == 'DEFAULT_UPDATE') {
     const userData = await getUserByItemId(request.body.item_id)
     client.getHoldings(userData.access_token, async function (error, holdingsResponse) {
       if (error != null) {
