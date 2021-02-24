@@ -8,7 +8,8 @@ create table usernames
 create table plaid_access_tokens
 (
   username VARCHAR(100),
-  access_token VARCHAR(100)
+  access_token VARCHAR(100),
+  item_id VARCHAR(100)
 );
 
 --securities

@@ -11,6 +11,8 @@ const holdingsModel = require("../models/holdings");
 const webhooksModel = require("../models/webhooks")
 
 const { savePlaidResponseLogs } = require("../savePlaidResponse")
+const { deleteSaveHoldingsSecurites } = require("../controllers/deleteSaveHoldingsSecurities");
+const { getUserByItemId } = require("../models/users");
 
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
 const PLAID_ENV = process.env.PLAID_ENV || 'sandbox';
@@ -108,19 +110,25 @@ router.post('/request/holdings', function (request, response, next) {
         error,
       });
     }
-    //delete old holdings/securities, then save new ones
-    const holdingsDeleteResponse = await holdingsModel.deleteHoldings(request.body.username)
-    const securitiesDeleteResponse = await securitiesModel.deleteSecurities(request.body.username)
-
-    const holdingsSaveResponse = await holdingsModel.saveHoldings(request.body.username, holdingsResponse.holdings);
-    const securitiesSaveResponse = await securitiesModel.saveSecurities(request.body.username, holdingsResponse.securities);
-    response.json({ holdingsDeleteResponse, securitiesDeleteResponse, securitiesSaveResponse, holdingsSaveResponse }).status(200)
+    const deleteSaveResponse = await deleteSaveHoldingsSecurites(request.body.username, holdingsResponse)
+    response.json(deleteSaveResponse)
   });
 });
 
 router.post('/webhook', async function (request, response, next) {
+  if (request.body.webhook_type == 'HOLDINGS' && request.body.webhook_code == 'DEFAULT UPDATE') {
+    const userData = await getUserByItemId(request.body.item_id)
+    client.getHoldings(userData.access_token, async function (error, holdingsResponse) {
+      if (error != null) {
+        prettyPrintResponse(error);
+        return response.json({
+          error,
+        });
+      }
+      const deleteSaveResponse = await deleteSaveHoldingsSecurites(userData.username, holdingsResponse)
+    });
+  }
   const saveResponse = await webhooksModel.saveWebhook(request.body)
-  //TODO get username & access_token via item_id from webhook, then run delete/save job
   if (saveResponse == true) {
     response.sendStatus(200)
   }
