@@ -9,7 +9,6 @@ const getHoldingsQuoteData = async (holdings) => {
       return { ...holding, quote }
     }
     catch (err) {
-      console.log(err)
       return { ...holding }
     }
   }))

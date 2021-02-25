@@ -57,6 +57,7 @@ router.post('/create_link_token', function (request, response, next) {
     products: PLAID_PRODUCTS,
     country_codes: PLAID_COUNTRY_CODES,
     language: 'en',
+    webhook: 'https://api.thebullpen.app/plaid/webhook',
   };
 
   client.createLinkToken(configs, function (error, createTokenResponse) {
