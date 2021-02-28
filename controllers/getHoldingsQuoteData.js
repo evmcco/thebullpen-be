@@ -3,7 +3,7 @@ const getHoldingsQuoteData = async (holdings) => {
   const holdingsWithQuotes = await Promise.all(holdings.map(async (holding) => {
     //fetch IEX quote endpoint for ticker
     try {
-      const response = await fetch(`https://cloud.iexapis.com/stable/stock/${holding.ticker_symbol}/quote?token=pk_e633719ef3e74b81914e51099c7b012d`)
+      const response = await fetch(`https://cloud.iexapis.com/stable/stock/${holding.ticker_symbol}/quote?token=${process.env.IEX_CLOUD_TOKEN}`)
       const quote = await response.json()
       //add response to holding object
       return { ...holding, quote }
