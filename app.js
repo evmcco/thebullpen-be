@@ -7,6 +7,7 @@ const logger = require("morgan");
 
 const usersRouter = require("./routes/users");
 const holdingsRouter = require("./routes/holdings");
+const transactionsRouter = require("./routes/transactions")
 const securitiesRouter = require("./routes/securities");
 const plaidRouter = require("./routes/plaid")
 const bullpensRouter = require("./routes/bullpens")
@@ -36,6 +37,7 @@ app.use(cors(corsOptions));
 
 app.use("/users", usersRouter);
 app.use("/holdings", holdingsRouter);
+app.use("/transactions", transactionsRouter)
 app.use("/plaid", plaidRouter)
 app.use("/securities", securitiesRouter);
 app.use("/bullpens", bullpensRouter);

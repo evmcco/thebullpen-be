@@ -23,6 +23,22 @@ class Securities {
       });
   }
 
+  static async upsertSecurities(securities) {
+    db.tx(t => {
+      const queries = securities.map(security => {
+        return t.none('insert into securities (close_price, close_price_as_of, cusip, institution_id, institution_security_id, is_cash_equivalent, isin, iso_currency_code, name, proxy_security_id, security_id, sedol, ticker_symbol, type, unofficial_currency_code) values (${close_price}, ${close_price_as_of}, ${cusip}, ${institution_id}, ${institution_security_id}, ${is_cash_equivalent}, ${isin}, ${iso_currency_code}, ${name}, ${proxy_security_id}, ${security_id}, ${sedol}, ${ticker_symbol}, ${type}, ${unofficial_currency_code}) on conflict (security_id) do update set close_price = ${close_price}, close_price_as_of = ${close_price_as_of}'
+          , security);
+      });
+      return t.batch(queries);
+    })
+      .then(data => {
+        return data
+      })
+      .catch(error => {
+        return error.message
+      });
+  }
+
   static async deleteSecurities(username) {
     try {
       const response = await db.none('delete from securities where username = ($1)', username)

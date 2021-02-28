@@ -11,7 +11,6 @@ const holdingsModel = require("../models/holdings");
 const webhooksModel = require("../models/webhooks")
 
 const { savePlaidResponseLogs } = require("../savePlaidResponse")
-const { deleteSaveHoldingsSecurites } = require("../controllers/deleteSaveHoldingsSecurities");
 const { getUserByItemId } = require("../models/users");
 
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
@@ -103,31 +102,59 @@ router.get('/holdings', function (request, response, next) {
   });
 });
 
-router.post('/request/holdings', function (request, response, next) {
-  client.getHoldings(request.body.plaid_access_token, async function (error, holdingsResponse) {
+const getSavePlaidHoldings = async (access_token, username) => {
+  client.getHoldings(access_token, async function (error, holdingsResponse) {
     if (error != null) {
       prettyPrintResponse(error);
       return response.json({
         error,
       });
     }
-    const deleteSaveResponse = await deleteSaveHoldingsSecurites(request.body.username, holdingsResponse)
-    response.json(deleteSaveResponse)
-  });
+    const { upsertSecuritiesDeleteSaveHoldings } = require("../controllers/upsertSecuritiesDeleteSaveHoldings");
+    const response = await upsertSecuritiesDeleteSaveHoldings(username, holdingsResponse)
+    return response
+  })
+}
+
+router.post('/request/holdings', async function (request, response, next) {
+  const getSaveResponse = await getSavePlaidHoldings(request.body.plaid_access_token, request.body.username)
+  response.json(getSaveResponse)
 });
 
-router.post('/webhook', async function (request, response, next) {
-  if (request.body.webhook_type == 'HOLDINGS' && request.body.webhook_code == 'DEFAULT_UPDATE') {
-    const userData = await getUserByItemId(request.body.item_id)
-    client.getHoldings(userData.access_token, async function (error, holdingsResponse) {
+const getSavePlaidTransactions = async (access_token, username) => {
+  const startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
+  const endDate = moment().format('YYYY-MM-DD');
+  client.getInvestmentTransactions(
+    access_token,
+    startDate,
+    endDate,
+    async function (error, investmentTransactionsResponse) {
       if (error != null) {
         prettyPrintResponse(error);
         return response.json({
           error,
         });
       }
-      const deleteSaveResponse = await deleteSaveHoldingsSecurites(userData.username, holdingsResponse)
-    });
+      const { upsertSecuritiesTransactions } = require("../controllers/upsertSecuritiesTransactions")
+      const response = await upsertSecuritiesTransactions(username, investmentTransactionsResponse)
+      return response
+    },
+  );
+}
+
+router.post('/request/transactions', async function (request, response, next) {
+  const getSaveResponse = await getSavePlaidTransactions(request.body.plaid_access_token, request.body.username)
+  response.json(getSaveResponse)
+});
+
+router.post('/webhook', async function (request, response, next) {
+  if (request.body.webhook_type == 'HOLDINGS' && request.body.webhook_code == 'DEFAULT_UPDATE') {
+    const userData = await getUserByItemId(request.body.item_id)
+    const getSaveResponse = await getSavePlaidHoldings(userData.access_token, userData.username)
+  }
+  else if (request.body.webhook_type == 'INVESTMENTS_TRANSACTIONS' && request.body.webhook_code == 'DEFAULT_UPDATE') {
+    const userData = await getUserByItemId(request.body.item_id)
+    const getSaveResponse = await getSavePlaidTransactions(userData.access_token, userData.username)
   }
   const saveResponse = await webhooksModel.saveWebhook(request.body)
   if (saveResponse == true) {

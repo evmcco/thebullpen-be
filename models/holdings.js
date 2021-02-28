@@ -5,7 +5,7 @@ const plaidSample = require('../plaidSample.json')
 class Holdings {
   static async getHoldingsByUser(username) {
     try {
-      const response = await db.any('select h.*, s.* from holdings h join securities s on h.security_id = s.security_id and h.username = s.username where h.username = ($1)', username);
+      const response = await db.any('select h.*, s.* from holdings h join securities s on h.security_id = s.security_id where h.username = ($1)', username);
       return response;
     } catch (err) {
       return err.message;

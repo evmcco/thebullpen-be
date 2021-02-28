@@ -16,8 +16,7 @@ create table plaid_access_tokens
 create table securities
 (
   id serial primary key,
-  security_id VARCHAR(50) not null,
-  username VARCHAR(50) not null,
+  security_id VARCHAR(50) unique not null,
   isin VARCHAR(12),
   cusip VARCHAR(9),
   sedol VARCHAR(7),
@@ -62,21 +61,20 @@ create table plaid_webhooks
 create table investment_transactions
 (
   investment_transaction_id VARCHAR(150) primary key,
-  username VARCHAR(50),
+  username VARCHAR(50) not null,
   cancel_transaction_id VARCHAR(150),
-  account_id VARCHAR(150),
+  account_id VARCHAR(150) not null,
   security_id VARCHAR(150),
-  date VARCHAR(150),
-  name VARCHAR(150),
-  quantity numeric,
-  amount numeric,
-  price numeric,
+  date timestamp,
+  name VARCHAR(150) not null,
+  quantity numeric not null,
+  amount numeric not null,
+  price numeric not null,
   fees numeric,
-  type VARCHAR(150),
-  subtype VARCHAR(150),
+  type VARCHAR(150) not null,
+  subtype VARCHAR(150) not null,
   iso_currency_code VARCHAR(10),
-  unofficial_currency_code VARCHAR(50),
-  request_id VARCHAR(50)
+  unofficial_currency_code VARCHAR(50)
 )
 
 --plaid item-level data
