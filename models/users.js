@@ -37,6 +37,15 @@ class Users {
     }
   }
 
+  static async getAllUsersAccessTokens() {
+    try {
+      const response = await db.any('select * from plaid_access_tokens')
+      return response
+    } catch (err) {
+      return err.message
+    }
+  }
+
   static async getUserByItemId(itemId) {
     try {
       const response = await db.one('select * from plaid_access_tokens where item_id = ($1)', itemId)

@@ -3,7 +3,7 @@ const db = require("./conn.js");
 class Transactions {
   static async getTransactionsByUser(username) {
     try {
-      const response = await db.any('select t.*, s.* from investment_transactions t join securities s on t.security_id = s.security_id where t.username = ($1)', username);
+      const response = await db.any('select t.*, s.* from investment_transactions t join securities s on t.security_id = s.security_id where t.username = ($1) order by date desc', username);
       return response;
     } catch (err) {
       return err.message;

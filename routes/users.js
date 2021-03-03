@@ -17,6 +17,11 @@ router.get("/get_access_tokens/:username", async (req, res, next) => {
   res.json(response).status(200);
 })
 
+router.get("/all/get_access_tokens", async (req, res, next) => {
+  const response = await usersModel.getAllUsersAccessTokens();
+  res.json(response).status(200);
+})
+
 router.post("/save_access_token", async (req, res, next) => {
   const response = await usersModel.saveAccessToken(req.body);
   res.json(response).status(200);
