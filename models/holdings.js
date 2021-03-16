@@ -12,14 +12,15 @@ class Holdings {
     }
   }
 
-  static async saveHoldings(username, holdings = plaidSample.holdings.holdings) {
+  static async saveHoldings(item_id, username, holdings = plaidSample.holdings.holdings) {
     // add user_id to each holding object
     holdings.forEach(holding => {
+      holding.item_id = item_id
       holding.username = username
     })
     db.tx(t => {
       const queries = holdings.map(holding => {
-        return t.none('insert into holdings (username, account_id, security_id, institution_price, institution_price_as_of, institution_value, cost_basis, quantity, iso_currency_code, unofficial_currency_code) values (${username}, ${account_id}, ${security_id}, ${institution_price}, ${institution_price_as_of}, ${institution_value}, ${cost_basis}, ${quantity}, ${iso_currency_code}, ${unofficial_currency_code})'
+        return t.none('insert into holdings (item_id, username, account_id, security_id, institution_price, institution_price_as_of, institution_value, cost_basis, quantity, iso_currency_code, unofficial_currency_code) values (${item_id}, ${username}, ${account_id}, ${security_id}, ${institution_price}, ${institution_price_as_of}, ${institution_value}, ${cost_basis}, ${quantity}, ${iso_currency_code}, ${unofficial_currency_code})'
           , holding);
       });
       return t.batch(queries);
@@ -32,9 +33,9 @@ class Holdings {
       });
   }
 
-  static async deleteHoldings(username) {
+  static async deleteHoldings(item_id) {
     try {
-      const response = await db.none('delete from holdings where username = ($1)', username)
+      const response = await db.none('delete from holdings where item_id = ($1)', item_id)
       return response
     } catch (err) {
       return err.message;

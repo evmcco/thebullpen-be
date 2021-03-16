@@ -30,7 +30,7 @@ class Users {
 
   static async getAccessTokens(username) {
     try {
-      const response = await db.any('select access_token from plaid_access_tokens where username = ($1)', username)
+      const response = await db.any('select access_token, item_id from plaid_access_tokens where username = ($1)', username)
       return response
     } catch (err) {
       return err.message

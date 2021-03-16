@@ -102,7 +102,7 @@ router.get('/holdings', function (request, response, next) {
   });
 });
 
-const getSavePlaidHoldings = async (access_token, username) => {
+const getSavePlaidHoldings = async (access_token, item_id, username) => {
   client.getHoldings(access_token, async function (error, holdingsResponse) {
     if (error != null) {
       prettyPrintResponse(error);
@@ -111,13 +111,13 @@ const getSavePlaidHoldings = async (access_token, username) => {
       });
     }
     const { upsertSecuritiesDeleteSaveHoldings } = require("../controllers/upsertSecuritiesDeleteSaveHoldings");
-    const response = await upsertSecuritiesDeleteSaveHoldings(username, holdingsResponse)
+    const response = await upsertSecuritiesDeleteSaveHoldings(item_id, username, holdingsResponse)
     return response
   })
 }
 
 router.post('/request/holdings', async function (request, response, next) {
-  const getSaveResponse = await getSavePlaidHoldings(request.body.plaid_access_token, request.body.username)
+  const getSaveResponse = await getSavePlaidHoldings(request.body.plaid_access_token, request.body.item_id, request.body.username)
   response.json(getSaveResponse)
 });
 
@@ -150,7 +150,7 @@ router.post('/request/transactions', async function (request, response, next) {
 router.post('/webhook', async function (request, response, next) {
   if (request.body.webhook_type == 'HOLDINGS' && request.body.webhook_code == 'DEFAULT_UPDATE') {
     const userData = await getUserByItemId(request.body.item_id)
-    const getSaveResponse = await getSavePlaidHoldings(userData.access_token, userData.username)
+    const getSaveResponse = await getSavePlaidHoldings(userData.access_token, request.body.item_id, userData.username)
   }
   else if (request.body.webhook_type == 'INVESTMENTS_TRANSACTIONS' && request.body.webhook_code == 'DEFAULT_UPDATE') {
     const userData = await getUserByItemId(request.body.item_id)

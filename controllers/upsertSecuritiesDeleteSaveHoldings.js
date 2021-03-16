@@ -1,9 +1,9 @@
-const upsertSecuritiesDeleteSaveHoldings = async (username, plaidResponse) => {
+const upsertSecuritiesDeleteSaveHoldings = async (item_id, username, plaidResponse) => {
   const securitiesModel = require("../models/securities");
   const holdingsModel = require("../models/holdings");
 
-  const holdingsDeleteResponse = await holdingsModel.deleteHoldings(username)
-  const holdingsSaveResponse = await holdingsModel.saveHoldings(username, plaidResponse.holdings);
+  const holdingsDeleteResponse = await holdingsModel.deleteHoldings(item_id)
+  const holdingsSaveResponse = await holdingsModel.saveHoldings(item_id, username, plaidResponse.holdings);
 
   const securitiesUpsertResponse = await securitiesModel.upsertSecurities(plaidResponse.securities);
 
