@@ -11,6 +11,7 @@ const transactionsRouter = require("./routes/transactions")
 const securitiesRouter = require("./routes/securities");
 const plaidRouter = require("./routes/plaid")
 const bullpensRouter = require("./routes/bullpens")
+const supportRouter = require("./routes/support")
 
 const cors = require("cors");
 
@@ -41,6 +42,7 @@ app.use("/transactions", transactionsRouter)
 app.use("/plaid", plaidRouter)
 app.use("/securities", securitiesRouter);
 app.use("/bullpens", bullpensRouter);
+app.use("/support", supportRouter)
 
 
 module.exports = app;

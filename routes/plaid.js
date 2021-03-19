@@ -6,11 +6,8 @@ const moment = require('moment');
 const util = require('util');
 const plaid = require('plaid');
 
-const securitiesModel = require("../models/securities");
-const holdingsModel = require("../models/holdings");
 const webhooksModel = require("../models/webhooks")
 
-const { savePlaidResponseLogs } = require("../savePlaidResponse")
 const { getUserByItemId } = require("../models/users");
 
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
@@ -89,62 +86,16 @@ router.post('/set_access_token', function (request, response, next) {
   });
 });
 
-router.get('/holdings', function (request, response, next) {
-  client.getHoldings(request.body.plaid_access_token, function (error, holdingsResponse) {
-    if (error != null) {
-      prettyPrintResponse(error);
-      return response.json({
-        error,
-      });
-    }
-    // prettyPrintResponse(holdingsResponse);
-    response.json({ error: null, holdings: holdingsResponse });
-  });
-});
-
-const getSavePlaidHoldings = async (access_token, item_id, username) => {
-  client.getHoldings(access_token, async function (error, holdingsResponse) {
-    if (error != null) {
-      prettyPrintResponse(error);
-      return response.json({
-        error,
-      });
-    }
-    const { upsertSecuritiesDeleteSaveHoldings } = require("../controllers/upsertSecuritiesDeleteSaveHoldings");
-    const response = await upsertSecuritiesDeleteSaveHoldings(item_id, username, holdingsResponse)
-    return response
-  })
-}
-
 router.post('/request/holdings', async function (request, response, next) {
-  const getSaveResponse = await getSavePlaidHoldings(request.body.plaid_access_token, request.body.item_id, request.body.username)
-  response.json(getSaveResponse)
+  const { requestHoldings } = require("../controllers/requestHoldings")
+  const requestHoldingsResponse = await requestHoldings(request.body.plaid_access_token, request.body.item_id, request.body.username)
+  response.status(200).json(requestHoldingsResponse)
 });
-
-const getSavePlaidTransactions = async (access_token, username) => {
-  const startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
-  const endDate = moment().format('YYYY-MM-DD');
-  client.getInvestmentTransactions(
-    access_token,
-    startDate,
-    endDate,
-    async function (error, investmentTransactionsResponse) {
-      if (error != null) {
-        prettyPrintResponse(error);
-        return response.json({
-          error,
-        });
-      }
-      const { upsertSecuritiesTransactions } = require("../controllers/upsertSecuritiesTransactions")
-      const response = await upsertSecuritiesTransactions(username, investmentTransactionsResponse)
-      return response
-    },
-  );
-}
 
 router.post('/request/transactions', async function (request, response, next) {
-  const getSaveResponse = await getSavePlaidTransactions(request.body.plaid_access_token, request.body.username)
-  response.json(getSaveResponse)
+  const { requestTransactions } = require("../controllers/requestTransactions")
+  const requestTransactionsResponse = await requestTransactions(request.body.plaid_access_token, request.body.username)
+  response.status(200).json(requestTransactionsResponse)
 });
 
 router.post('/webhook', async function (request, response, next) {
@@ -161,29 +112,6 @@ router.post('/webhook', async function (request, response, next) {
     response.sendStatus(200)
   }
 })
-
-router.get('/investment_transactions', function (request, response, next) {
-  const startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
-  const endDate = moment().format('YYYY-MM-DD');
-  client.getInvestmentTransactions(
-    request.body.plaid_access_token,
-    startDate,
-    endDate,
-    function (error, investmentTransactionsResponse) {
-      if (error != null) {
-        prettyPrintResponse(error);
-        return response.json({
-          error,
-        });
-      }
-      prettyPrintResponse(investmentTransactionsResponse);
-      response.json({
-        error: null,
-        investment_transactions: investmentTransactionsResponse,
-      });
-    },
-  );
-});
 
 router.get('/item', function (request, response, next) {
   // Pull the Item - this includes information about available products,
