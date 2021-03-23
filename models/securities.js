@@ -38,15 +38,6 @@ class Securities {
         return error.message
       });
   }
-
-  static async deleteSecurities(username) {
-    try {
-      const response = await db.none('delete from securities where username = ($1)', username)
-      return response
-    } catch (err) {
-      return err.message;
-    }
-  }
 }
 
 module.exports = Securities;

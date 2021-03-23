@@ -9,6 +9,8 @@ const plaid = require('plaid');
 const webhooksModel = require("../models/webhooks")
 
 const { getUserByItemId } = require("../models/users");
+const { requestHoldings } = require("../controllers/requestHoldings")
+const { requestTransactions } = require("../controllers/requestTransactions")
 
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
 const PLAID_ENV = process.env.PLAID_ENV || 'sandbox';
@@ -87,27 +89,25 @@ router.post('/set_access_token', function (request, response, next) {
 });
 
 router.post('/request/holdings', async function (request, response, next) {
-  const { requestHoldings } = require("../controllers/requestHoldings")
   const requestHoldingsResponse = await requestHoldings(request.body.plaid_access_token, request.body.item_id, request.body.username)
   response.status(200).json(requestHoldingsResponse)
 });
 
 router.post('/request/transactions', async function (request, response, next) {
-  const { requestTransactions } = require("../controllers/requestTransactions")
   const requestTransactionsResponse = await requestTransactions(request.body.plaid_access_token, request.body.username)
   response.status(200).json(requestTransactionsResponse)
 });
 
 router.post('/webhook', async function (request, response, next) {
+  const saveResponse = await webhooksModel.saveWebhook(request.body)
   if (request.body.webhook_type == 'HOLDINGS' && request.body.webhook_code == 'DEFAULT_UPDATE') {
     const userData = await getUserByItemId(request.body.item_id)
-    const getSaveResponse = await getSavePlaidHoldings(userData.access_token, request.body.item_id, userData.username)
+    const requestResponse = await requestHoldings(userData.access_token, request.body.item_id, userData.username)
   }
   else if (request.body.webhook_type == 'INVESTMENTS_TRANSACTIONS' && request.body.webhook_code == 'DEFAULT_UPDATE') {
     const userData = await getUserByItemId(request.body.item_id)
-    const getSaveResponse = await getSavePlaidTransactions(userData.access_token, userData.username)
+    const requestResponse = await requestTransactions(userData.access_token, userData.username)
   }
-  const saveResponse = await webhooksModel.saveWebhook(request.body)
   if (saveResponse == true) {
     response.sendStatus(200)
   }
