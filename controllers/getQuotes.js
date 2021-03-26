@@ -18,7 +18,6 @@ const getQuotes = async (holdings) => {
 }
 
 const getQuote = async (ticker) => {
-  console.log(`FETCHING ${ticker}`)
   const response = await fetch(`https://cloud.iexapis.com/stable/stock/${ticker}/quote?token=${process.env.IEX_CLOUD_TOKEN}`)
   const quote = await response.json()
   quote.statusCode = response.status
