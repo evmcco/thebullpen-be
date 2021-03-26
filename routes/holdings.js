@@ -2,23 +2,21 @@ const express = require("express");
 const router = express.Router();
 const holdingsModel = require("../models/holdings");
 
-const { getHoldingsQuoteData } = require("../controllers/getHoldingsQuoteData")
-const { processDerivatives } = require("../controllers/processDerivatives")
+const { getQuotes } = require("../controllers/getQuotes")
 const { calculateProfit } = require("../controllers/calculateProfit")
 
 router.get("/user/:username", async (req, res, next) => {
   const userHoldings = await holdingsModel.getHoldingsByUser(req.params.username);
-  const derivatives = userHoldings.filter((holding) => {
-    return holding.type == 'derivative'
+  userHoldings.forEach((holding) => {
+    if (holding.type === 'derivative') {
+      const regEx = /([\w]+)((\d{2})(\d{2})(\d{2}))([PC])(\d{8})/g;
+      holding.parsedTicker = regEx.exec(holding.ticker_symbol)
+    }
   })
-  const equities = userHoldings.filter((holding => {
-    return holding.type != 'derivative'
-  }))
   //take tickers from userHoldings, hit IEX with each of them, add IEX data to each holdings object, then send to FE
-  const userEquitiesHoldingsWithQuotes = await getHoldingsQuoteData(equities)
-  const equitiesWithQuotesAndProfit = await calculateProfit(userEquitiesHoldingsWithQuotes)
-  const parsedDerivativesWithQuotes = await processDerivatives(derivatives)
-  res.json([...equitiesWithQuotesAndProfit, ...parsedDerivativesWithQuotes]).status(200);
+  const holdingWithQuotes = await getQuotes(userHoldings)
+  const holdingWithQuotesAndProfit = await calculateProfit(holdingWithQuotes)
+  res.json(holdingWithQuotesAndProfit).status(200);
 });
 
 router.post("/save", async (req, res, next) => {

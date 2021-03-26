@@ -25,6 +25,9 @@ const corsOptions = {
     "Origin, X-Requested-With, Content-Type, Accept"
 };
 
+//global Map variable to be used in memoizing quote requests to IEX, see controllers/getQuotes
+quoteMap = new Map()
+
 const app = express();
 
 app.set('port', 8888)
