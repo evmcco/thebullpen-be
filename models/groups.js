@@ -56,7 +56,7 @@ class Groups {
   static async getUserGroups(username) {
     //get all of a user's groups
     try {
-      const response = await db.any('select * from groups_users where username = ($1) order by joined_date asc', username)
+      const response = await db.any('select g.name, g.id from groups_users gu join groups g on gu.group_id = g.id where username = ($1) order by joined_date asc', username)
       return response
     } catch (err) {
       return err.message

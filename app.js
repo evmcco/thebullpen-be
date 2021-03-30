@@ -12,6 +12,7 @@ const securitiesRouter = require("./routes/securities");
 const plaidRouter = require("./routes/plaid")
 const bullpensRouter = require("./routes/bullpens")
 const supportRouter = require("./routes/support")
+const groupsRouter = require("./routes/groups")
 
 const cors = require("cors");
 
@@ -46,6 +47,7 @@ app.use("/plaid", plaidRouter)
 app.use("/securities", securitiesRouter);
 app.use("/bullpens", bullpensRouter);
 app.use("/support", supportRouter)
+app.use("/groups", groupsRouter)
 
 
 module.exports = app;
