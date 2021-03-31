@@ -33,10 +33,30 @@ class Groups {
     }
   }
 
+  static async isUserInGroup(username, groupId) {
+    //remove a user from a group
+    try {
+      const response = await db.one('select exists (select 1 from groups_users where username = ($1) and group_id = ($2))', [username, groupId])
+      return response
+    } catch (err) {
+      return err.message
+    }
+  }
+
   static async getAllGroups() {
     //get all groups
     try {
       const response = await db.any('select g.*, count(*) as members from groups g join groups_users gu on g.id = gu.group_id group by g.id')
+      return response
+    } catch (err) {
+      return err.message
+    }
+  }
+
+  static async getGroupDetails(groupId) {
+    //get the details of a single group
+    try {
+      const response = await db.any('select * from groups where id = ($1)', groupId)
       return response
     } catch (err) {
       return err.message

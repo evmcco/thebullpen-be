@@ -17,8 +17,18 @@ router.post("/leave", async (req, res, next) => {
   res.json(response).status(200)
 })
 
+router.get("/memberof/:username/:groupId", async (req, res, next) => {
+  const response = await groupsModel.isUserInGroup(req.params.username, req.params.groupId)
+  res.json(response).status(200)
+})
+
 router.get("/all", async (req, res, next) => {
   const response = await groupsModel.getAllGroups()
+  res.json(response).status(200)
+})
+
+router.get("/details/:groupId", async (req, res, next) => {
+  const response = await groupsModel.getGroupDetails(req.params.groupId)
   res.json(response).status(200)
 })
 
