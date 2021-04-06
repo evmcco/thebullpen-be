@@ -82,6 +82,24 @@ class Groups {
       return err.message
     }
   }
+
+  static async getGroupCommonHoldings(groupId) {
+    try {
+      const response = await db.any("select s.ticker_symbol, count(*) as count from groups_users gu join holdings h on gu.username = h.username join securities s on h.security_id = s.security_id where gu.group_id = ($1) and s.type != 'cash' group by s.ticker_symbol order by count desc limit 10", groupId)
+      return response
+    } catch (err) {
+      return err.message
+    }
+  }
+
+  static async getRecentGroupTransactions(groupId) {
+    try {
+      const response = await db.any("select s.ticker_symbol, t.type, to_char(t.date, 'YYYY-MM-DD') as date, t.username from groups_users gu join investment_transactions t on gu.username = t.username join securities s on t.security_id = s.security_id where gu.group_id = ($1) and t.type != 'cash' order by t.date desc limit 10", groupId)
+      return response
+    } catch (err) {
+      return err.message
+    }
+  }
 }
 
 module.exports = Groups;

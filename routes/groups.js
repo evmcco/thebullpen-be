@@ -42,4 +42,14 @@ router.get("/user/all/:username", async (req, res, next) => {
   res.json(response).status(200)
 })
 
+router.get("/data/commonholdings/:groupId", async (req, res, next) => {
+  const response = await groupsModel.getGroupCommonHoldings(req.params.groupId)
+  res.json(response).status(200)
+})
+
+router.get("/data/recenttransactions/:groupId", async (req, res, next) => {
+  const response = await groupsModel.getRecentGroupTransactions(req.params.groupId)
+  res.json(response).status(200)
+})
+
 module.exports = router;
