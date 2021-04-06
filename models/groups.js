@@ -85,7 +85,7 @@ class Groups {
 
   static async getGroupCommonHoldings(groupId) {
     try {
-      const response = await db.any("select s.ticker_symbol, count(*) as count from groups_users gu join holdings h on gu.username = h.username join securities s on h.security_id = s.security_id where gu.group_id = ($1) and s.type != 'cash' group by s.ticker_symbol order by count desc limit 10", groupId)
+      const response = await db.any("select s.ticker_symbol, s.name, count(*) as count from groups_users gu join holdings h on gu.username = h.username join securities s on h.security_id = s.security_id where gu.group_id = ($1) and s.type != 'cash' group by s.ticker_symbol, s.name order by count desc limit 10", groupId)
       return response
     } catch (err) {
       return err.message
