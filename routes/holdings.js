@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+
 const holdingsModel = require("../models/holdings");
 
 const { getQuotes } = require("../controllers/getQuotes")
