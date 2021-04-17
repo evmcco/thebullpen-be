@@ -5,6 +5,7 @@ const holdingsModel = require("../models/holdings");
 
 const { getQuotes } = require("../controllers/getQuotes")
 const { calculateProfit } = require("../controllers/calculateProfit")
+const { processHoldings } = require("../controllers/processHoldings")
 
 router.get("/user/:username", async (req, res, next) => {
   const userHoldings = await holdingsModel.getHoldingsByUser(req.params.username);
@@ -15,9 +16,10 @@ router.get("/user/:username", async (req, res, next) => {
     }
   })
   //take tickers from userHoldings, hit IEX with each of them, add IEX data to each holdings object, then send to FE
-  const holdingWithQuotes = await getQuotes(userHoldings)
-  const holdingWithQuotesAndProfit = await calculateProfit(holdingWithQuotes)
-  res.json(holdingWithQuotesAndProfit).status(200);
+  // const holdingWithQuotes = await getQuotes(userHoldings)
+  // const holdingWithQuotesAndProfit = await calculateProfit(holdingWithQuotes)
+  const processedHoldings = await processHoldings(userHoldings)
+  res.json(processedHoldings).status(200);
 });
 
 router.post("/save", async (req, res, next) => {
