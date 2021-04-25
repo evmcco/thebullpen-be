@@ -19,13 +19,14 @@ const processHoldings = async (holdings) => {
 const trimHoldings = (holdings, totalPortfolioValue) => {
   return holdings.map((holding) => {
     const trimmedHolding = {}
-    trimmedHolding.ticker_symbol = holding.ticker_symbol
-    trimmedHolding.href = ((holding.type == 'etf' || holding.type == 'equity' || holding.type == 'mutual fund') && holding.ticker_symbol != 'CUR:BTC') ? `https://finance.yahoo.com/quote/${holding.ticker_symbol}` : removeCur(holding.ticker_symbol)
+    trimmedHolding.ticker_symbol = removeCur(holding.ticker_symbol)
     trimmedHolding.change = !!holding.quote ? (Number(holding.quote.changePercent) * 100).toFixed(2) : null
     trimmedHolding.currentPrice = !!holding.quote?.latestPrice ? holding.quote.latestPrice : holding.close_price
     trimmedHolding.averageCost = !!holding.cost_basis && !!holding.quantity ? (Number(holding.cost_basis) / Number(holding.quantity)).toFixed(3) : holding.ticker_symbol == 'CUR:USD' ? 1 : null
     trimmedHolding.profit = !!holding.profit ? `${holding.profit}%` : null
     trimmedHolding.weight = !!holding.quote?.latestPrice ? ((((Number(holding.quantity) * holding.quote.latestPrice) / totalPortfolioValue) * 100).toFixed(2) + '%') : null
+    trimmedHolding.type = holding.type
+    trimmedHolding.parsedTicker = holding.parsedTicker
     return trimmedHolding
   })
 }
@@ -48,6 +49,14 @@ const getTotalPortfolioValue = (h) => {
     return Number(accumulator) + totalHoldingValue
   }
   return h.reduce(reducer, 0).toFixed(2)
+}
+
+const removeCur = (ticker) => {
+  if (ticker.startsWith('CUR:')) {
+    return ticker.substring(4)
+  } else {
+    return ticker
+  }
 }
 
 module.exports = { processHoldings }
