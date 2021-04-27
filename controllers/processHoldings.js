@@ -21,7 +21,7 @@ const trimHoldings = (holdings, totalPortfolioValue) => {
     const trimmedHolding = {}
     trimmedHolding.ticker_symbol = removeCur(holding.ticker_symbol)
     trimmedHolding.change = !!holding.quote ? (Number(holding.quote.changePercent) * 100).toFixed(2) : null
-    trimmedHolding.currentPrice = !!holding.quote?.latestPrice ? holding.quote.latestPrice : holding.close_price
+    trimmedHolding.currentPrice = !!holding.quote?.latestPrice ? Number(holding.quote.latestPrice).toFixed(2) : holding.close_price
     trimmedHolding.averageCost = !!holding.quantity ? (Number(holding.cost_basis) / Number(holding.quantity)).toFixed(3) : null
     trimmedHolding.profit = !!holding.profit ? `${holding.profit}%` : null
     trimmedHolding.weight = (((Number(holding.quantity) * trimmedHolding.currentPrice) / totalPortfolioValue) * 100).toFixed(2) + '%'
