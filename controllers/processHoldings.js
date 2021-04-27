@@ -22,11 +22,10 @@ const trimHoldings = (holdings, totalPortfolioValue) => {
     trimmedHolding.ticker_symbol = removeCur(holding.ticker_symbol)
     trimmedHolding.change = !!holding.quote ? (Number(holding.quote.changePercent) * 100).toFixed(2) : null
     trimmedHolding.currentPrice = !!holding.quote?.latestPrice ? holding.quote.latestPrice : holding.close_price
-    trimmedHolding.averageCost = !!holding.cost_basis && !!holding.quantity ? (Number(holding.cost_basis) / Number(holding.quantity)).toFixed(3) : holding.ticker_symbol == 'CUR:USD' ? 1 : null
+    trimmedHolding.averageCost = !!holding.quantity ? (Number(holding.cost_basis) / Number(holding.quantity)).toFixed(3) : null
     trimmedHolding.profit = !!holding.profit ? `${holding.profit}%` : null
-    trimmedHolding.weight = !!holding.quote?.latestPrice ? ((((Number(holding.quantity) * holding.quote.latestPrice) / totalPortfolioValue) * 100).toFixed(2) + '%') : null
+    trimmedHolding.weight = (((Number(holding.quantity) * trimmedHolding.currentPrice) / totalPortfolioValue) * 100).toFixed(2) + '%'
     trimmedHolding.type = holding.type
-    trimmedHolding.parsedTicker = holding.parsedTicker
     return trimmedHolding
   })
 }

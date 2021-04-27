@@ -16,6 +16,7 @@ router.get("/calculate/today/all", async (req, res, next) => {
   allUsers.forEach(async (user) => {
     const userHoldingsWithPerformance = await calculateDailyPerformance(user.username)
     userHoldingsWithPerformance.forEach((data) => {
+      //setTimeout?
       performanceModel.saveTickerPerformance(data)
     })
   })

@@ -18,6 +18,7 @@ const getQuotes = async (holdings) => {
 }
 
 const getQuote = async (ticker) => {
+  //I think this is where the try...catch should be, not up top
   const response = await fetch(`https://cloud.iexapis.com/stable/stock/${ticker}/quote?token=${process.env.IEX_CLOUD_TOKEN}`)
   const quote = await response.json()
   quote.statusCode = response.status
