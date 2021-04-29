@@ -12,15 +12,11 @@ router.get("/daily/:username", async (req, res, next) => {
 
 router.get("/calculate/today/all", async (req, res, next) => {
   const allUsers = await bullpensModel.getAllBullpens()
-  console.log(allUsers)
   allUsers.forEach(async (user) => {
-    const userHoldingsWithPerformance = await calculateDailyPerformance(user.username)
-    userHoldingsWithPerformance.forEach((data) => {
-      //setTimeout?
-      performanceModel.saveTickerPerformance(data)
-    })
+    const userPerformance = await calculateDailyPerformance(user.username)
+    performanceModel.saveTickerPerformance(user.username, userPerformance)
   })
-  res.json(response).status(200)
+  res.sendStatus(200)
 })
 
 module.exports = router;

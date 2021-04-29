@@ -103,3 +103,11 @@ create table plaid_accounts
   subtype varchar(100),
   verification_status varchar(100)
 )
+
+create table performance
+(
+  id serial primary key,
+  username VARCHAR(50) not null,
+  performance numeric not null,
+  date timestamp not null
+)

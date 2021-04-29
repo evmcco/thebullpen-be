@@ -19,15 +19,17 @@ const calculateDailyPerformance = async (username) => {
     const price = !!holding.quote?.latestPrice ? holding.quote.latestPrice : Number(holding.close_price)
     const weight = ((Number(holding.quantity) * price) / totalPortfolioValue)
     //calculate performance which is the sum of weight * change for all holdings 
-    return {
-      username,
-      ticker_symbol: holding.ticker_symbol,
-      weight,
-      change: holding.quote?.changePercent
+    // console.log({ ticker: holding.ticker_symbol, weight, change: holding.quote?.changePercent })
+    try {
+      return weight * Number(holding.quote.changePercent)
+    } catch {
+      return 0
     }
   })
-  //save to the database
-  return holdingsWithPerformance
+  const reducer = (a, cV) => {
+    return a + cV
+  }
+  return (holdingsWithPerformance.reduce(reducer, 0) * 100).toFixed(2)
 }
 
 const getTotalPortfolioValue = (holdings) => {

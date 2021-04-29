@@ -2,14 +2,11 @@ const db = require("./conn.js");
 const moment = require('moment');
 
 class Performance {
-  static async saveTickerPerformance(data) {
+  static async saveTickerPerformance(username, performance) {
     const date = moment().format('YYYY-MM-DD')
     try {
-      // const response = await db.none('insert into performance (username, ticker, weight, change, date) values (($1), ($2), ($3), ($4), ($5))', [...data, date])
-      // return response
-
-      //upsert performance row
-      console.log(data, date)
+      const response = await db.none('insert into performance (username, performance, date) values (($1), ($2), ($3)) on conflict (username, date) do update set performance = ($2)', [username, Number(performance), date])
+      return true
     } catch (err) {
       return err.message
     }
