@@ -19,4 +19,9 @@ router.get("/calculate/today/all", async (req, res, next) => {
   res.sendStatus(200)
 })
 
+router.get("/leaderboard/today", async (req, res, next) => {
+  const response = await performanceModel.getTodaysLeaderboard()
+  res.json(response).status(200)
+})
+
 module.exports = router;

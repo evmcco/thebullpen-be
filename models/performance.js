@@ -11,6 +11,15 @@ class Performance {
       return err.message
     }
   }
+
+  static async getTodaysLeaderboard() {
+    try {
+      const response = await db.any("select p.* from performance p where date = (select max(date) from performance p1 where p1.username = p.username) order by performance desc")
+      return response
+    } catch (err) {
+      return err.message
+    }
+  }
 }
 
 module.exports = Performance;
