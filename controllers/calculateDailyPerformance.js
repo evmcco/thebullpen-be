@@ -7,7 +7,7 @@ const calculateDailyPerformance = async (username) => {
   const holdings = await holdingsModel.getHoldingsByUser(username)
   //filter out cryptos and options
   const filteredHoldings = holdings.filter(holding =>
-    (holding.type === "etf" || holding.type === "equity") && (!!holding.cost_basis && !!holding.ticker_symbol)
+    (holding.type === "etf" || holding.type === "equity" || !!holding.unofficial_currency_code) && (!!holding.cost_basis && !!holding.ticker_symbol)
   )
   //get quote data for each ticker
   const holdingsWithQuotes = await getQuotes(filteredHoldings)
