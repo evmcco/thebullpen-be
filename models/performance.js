@@ -6,7 +6,6 @@ class Performance {
     const date = moment().format('YYYY-MM-DD')
     try {
       const response = await db.none('insert into performance (username, performance, date) values (($1), ($2), ($3)) on conflict (username, date) do update set performance = ($2)', [username, Number(performance), date])
-      console.log(`${username} performance for ${date}: ${performance}%`)
       return true
     } catch (err) {
       return err.message
