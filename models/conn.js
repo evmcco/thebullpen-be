@@ -1,11 +1,7 @@
 // database connection parameters
 require('dotenv').config()
 
-const pgp = require("pg-promise")({
-  query: e => {
-    console.log("QUERY:", e.query);
-  }
-});
+const pgp = require("pg-promise")
 
 const options = process.env.DATABASE_URL ? {
   connectionString: process.env.DATABASE_URL,
@@ -13,9 +9,9 @@ const options = process.env.DATABASE_URL ? {
     rejectUnauthorized: false
   }
 } : {
-    host: "localhost",
-    database: "thebullpen",
-  };
+  host: "localhost",
+  database: "thebullpen",
+};
 
 const db = pgp(options);
 
