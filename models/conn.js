@@ -1,7 +1,7 @@
 // database connection parameters
 require('dotenv').config()
 
-const pgp = require("pg-promise")
+const pgp = require("pg-promise")()
 
 const options = process.env.DATABASE_URL ? {
   connectionString: process.env.DATABASE_URL,
