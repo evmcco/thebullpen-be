@@ -6,7 +6,7 @@ class Transactions {
   static async getTransactionsByUser(username) {
     const startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
     try {
-      const response = await db.any("select to_char(t.date, 'YYYY-MM-DD') as date, t.price, t.type as txn_type, t.subtype, s.unofficial_currency_code, s.ticker_symbol, s.type from investment_transactions t join securities s on t.security_id = s.security_id where t.username = ($1) and t.date > ($2) and t.type in ('buy', 'sell') order by t.date desc, s.ticker_symbol asc, t.subtype asc", [username, startDate]);
+      const response = await db.any("select to_char(t.date, 'YYYY-MM-DD') as date, t.price, t.type as txn_type, t.subtype, s.unofficial_currency_code, s.ticker_symbol, s.type from investment_transactions t join securities s on t.security_id = s.security_id where t.username = ($1) and t.date > ($2) and t.type in ('buy', 'sell') and s.ticker_symbol is not null order by t.date desc, s.ticker_symbol asc, t.subtype asc", [username, startDate]);
       return response;
     } catch (err) {
       return err.message;
