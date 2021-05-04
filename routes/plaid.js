@@ -57,8 +57,6 @@ router.post('/create_link_token', function (request, response, next) {
     webhook: 'https://api.bullpen.fi/plaid/webhook',
   };
 
-  console.log(configs)
-
   client.createLinkToken(configs, function (error, createTokenResponse) {
     if (error != null) {
       prettyPrintResponse(error);
