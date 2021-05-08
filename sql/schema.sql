@@ -111,3 +111,9 @@ create table performance
   performance numeric not null,
   date timestamp not null
 )
+
+create table zabo_account_ids
+(
+  username VARCHAR(50) not null,
+  account_id VARCHAR(40) not null
+)
