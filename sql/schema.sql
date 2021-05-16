@@ -112,8 +112,26 @@ create table performance
   date timestamp not null
 )
 
-create table zabo_account_ids
+create table zabo_accounts
 (
   username VARCHAR(50) not null,
-  account_id VARCHAR(40) not null
+  user_id VARCHAR(40) not null,
+  account_id VARCHAR(40) not null,
+  provider_name VARCHAR(100) not null,
+  provider_logo VARCHAR(200)
+)
+
+create table zabo_balances
+(
+  id serial primary key,
+  username VARCHAR(50) not null,
+  account_id VARCHAR(40) not null,
+  balance_json jsonb
+)
+
+create table zabo_transactions
+(
+  id VARCHAR(200) primary key,
+  username VARCHAR(50) not null,
+  transaction_json jsonb
 )
