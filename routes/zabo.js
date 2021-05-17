@@ -28,13 +28,13 @@ router.post('/save_account_id', async function (req, res, next) {
   //check DB to see if user has a zabo connection and user_id already, if so add the account to the existing user instead
   const zaboUserId = await zaboModel.getZaboUserId(req.body.username)
   if (!!zaboUserId) {
-    const zaboUser = await zabo.users.getOne(zaboUserId)
+    var zaboUser = await zabo.users.getOne(zaboUserId)
     console.log("zaboUser", zaboUser)
     try {
       await zabo.users.addAccount(zaboUser, req.body.account)
     } catch (e) {
-      console.log(e)
-      return e
+      console.log(e.message)
+      return e.message
     }
   } else {
     //if Bullpen user doesn't have a Zabo connection yet, create a new user
@@ -59,6 +59,30 @@ router.post('/save_account_id', async function (req, res, next) {
   //TODO if last_updated_at is 0, wait for half a second and call again
   //TODO save the transactions
 });
+
+router.get('/user/accounts/:username', async function (req, res, next) {
+  const zabo = await initZabo()
+  try {
+    const zaboUserId = await zaboModel.getZaboUserId(req.params.username)
+    const zaboUser = await zabo.users.getOne(zaboUserId)
+    const userAccounts = zaboUser.accounts
+    res.json({ user_id: zaboUserId, accounts: userAccounts }).status(200)
+  } catch {
+    res.sendStatus(400)
+  }
+})
+
+router.delete('/user/:user_id/accounts/:account_id', async function (req, res, next) {
+  const zabo = await initZabo()
+  console.log(req.params)
+  try {
+    const response = await zabo.users.removeAccount({ userId: req.params.user_id, accountId: req.params.account_id })
+    console.log(response)
+    res.json(response).status(200)
+  } catch {
+    res.sendStatus(400)
+  }
+})
 
 router.post('/webhook', async function (request, response, next) {
   //TODO handle incoming webhooks https://zabo.com/docs/#transaction-and-balance-updates
