@@ -49,17 +49,18 @@ router.post('/save_account_id', async function (req, res, next) {
     userId,
     accountId
   })
-  console.log(balsResponse)
-  //TODO save the account balances
-  const saveResponse = await zaboBalancesModel.saveBalances(req.body.username, accountId, balsResponse.data)
+  //save the account balances
+  const balsSaveResponse = await zaboBalancesModel.saveBalances(req.body.username, accountId, balsResponse.data)
   //get the transactions
   const txnsResponse = await zabo.transactions.getList({
     userId,
     accountId,
-    limit: 1
+    limit: 5
   })
+  console.log(txnsResponse)
   //TODO if last_updated_at is 0, wait for half a second and call again
-  //TODO save the transactions
+  //save the transactions
+  const txnsSaveResponse = await zaboTransactionsModel.saveTransactions(req.body.username, accountId, txnsResponse.data)
 });
 
 router.get('/user/accounts/:username', async function (req, res, next) {
