@@ -42,14 +42,16 @@ router.post('/save_account_id', async function (req, res, next) {
   }
   const userId = zaboUser.id
   const accountId = req.body.account.id
-  //save account
+  //save account DO I NEED TO DO THIS?
   await zaboModel.saveAccount(req.body.username, userId, accountId, req.body.account.provider.name, req.body.account.provider.logo)
   //get the account balances
   const balsResponse = await zabo.users.getBalances({
     userId,
     accountId
   })
+  console.log(balsResponse)
   //TODO save the account balances
+  const saveResponse = await zaboBalancesModel.saveBalances(req.body.username, accountId, balsResponse.data)
   //get the transactions
   const txnsResponse = await zabo.transactions.getList({
     userId,

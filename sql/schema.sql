@@ -133,5 +133,6 @@ create table zabo_transactions
 (
   id VARCHAR(200) primary key,
   username VARCHAR(50) not null,
+  account_id VARCHAR(40) not null,
   transaction_json jsonb
 )

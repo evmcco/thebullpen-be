@@ -12,7 +12,7 @@ class Holdings {
     }
   }
 
-  static async saveHoldings(item_id, username, holdings = plaidSample.holdings.holdings) {
+  static async saveHoldings(item_id, username, holdings) {
     // add user_id to each holding object
     holdings.forEach(holding => {
       holding.item_id = item_id
