@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 require('dotenv').config()
-const Zabo = require('zabo-sdk-js')
+const Zabo = require('zabo-sdk-js');
+const { getUserByItemId } = require("../models/users");
 
 const zaboModel = require("../models/zabo");
 const zaboBalancesModel = require("../models/zaboBalances")
@@ -23,13 +24,35 @@ router.get('/', async function (req, res, next) {
   console.log(myTeam)
 });
 
+async function getAllZaboTransactions(params) {
+  const transactions = []
+
+  let page
+  while (true) {
+    const resp = await (page ? page.next() : zabo.transactions.getList(params))
+
+    const list = resp.data || []
+    const delay = resp.delay * 1000 // ms
+    const lastUpdatedAt = resp.last_updated_at
+
+    if (delay && !lastUpdatedAt) {
+      await new Promise(res => setTimeout(res, delay))
+    } else {
+      transactions.push(...list)
+      if (!resp.hasMore) break
+      page = resp
+    }
+  }
+
+  return transactions
+}
+
 router.post('/save_account_id', async function (req, res, next) {
   const zabo = await initZabo()
   //check DB to see if user has a zabo connection and user_id already, if so add the account to the existing user instead
   const zaboUserId = await zaboModel.getZaboUserId(req.body.username)
-  if (!!zaboUserId) {
+  if (zaboUserId !== "No data returned from the query.") {
     var zaboUser = await zabo.users.getOne(zaboUserId)
-    console.log("zaboUser", zaboUser)
     try {
       await zabo.users.addAccount(zaboUser, req.body.account)
     } catch (e) {
@@ -38,7 +61,7 @@ router.post('/save_account_id', async function (req, res, next) {
     }
   } else {
     //if Bullpen user doesn't have a Zabo connection yet, create a new user
-    const zaboUser = await zabo.users.create(req.body.account)
+    var zaboUser = await zabo.users.create(req.body.account)
   }
   const userId = zaboUser.id
   const accountId = req.body.account.id
@@ -52,13 +75,10 @@ router.post('/save_account_id', async function (req, res, next) {
   //save the account balances
   const balsSaveResponse = await zaboBalancesModel.saveBalances(req.body.username, accountId, balsResponse.data)
   //get the transactions
-  const txnsResponse = await zabo.transactions.getList({
+  const txnsResponse = await getAllZaboTransactions({
     userId,
     accountId,
-    limit: 5
   })
-  console.log(txnsResponse)
-  //TODO if last_updated_at is 0, wait for half a second and call again
   //save the transactions
   const txnsSaveResponse = await zaboTransactionsModel.saveTransactions(req.body.username, accountId, txnsResponse.data)
 });
@@ -89,6 +109,18 @@ router.delete('/user/:user_id/accounts/:account_id', async function (req, res, n
 
 router.post('/webhook', async function (request, response, next) {
   //TODO handle incoming webhooks https://zabo.com/docs/#transaction-and-balance-updates
+  const webhookSaveResponse = await webhooksModel.saveWebhook(request.body)
+  if (req.body.event === "transactions.update") {
+    const accountId = req.body.data.account_id
+    //delete balances for the account 
+    const balancesDeleteResponse = await zaboBalancesModel.deleteBalancesForAccount(accountId)
+    //save the new balances to the account
+    const username = await zaboModel.getUsernameFromAccountId(accountId)
+    const balsSaveResponse = await zaboBalancesModel.saveBalances(username, accountId, req.body.data.balances)
+    //save transactions for the account
+    const txnsSaveResponse = await zaboTransactionsModel.saveTransactions(username, accountId, req.body.data.transactions)
+  }
 })
+
 
 module.exports = router;

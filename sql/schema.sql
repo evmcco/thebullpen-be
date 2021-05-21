@@ -116,7 +116,7 @@ create table zabo_accounts
 (
   username VARCHAR(50) not null,
   user_id VARCHAR(40) not null,
-  account_id VARCHAR(40) not null,
+  account_id VARCHAR(40) primary key,
   provider_name VARCHAR(100) not null,
   provider_logo VARCHAR(200)
 )

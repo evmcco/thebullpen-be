@@ -18,6 +18,15 @@ class Zabo {
       return err.message
     }
   }
+
+  static async getUsernameFromAccountId(accountId) {
+    try {
+      const response = await db.one("select username from zabo_accounts where account_id = $1", accountId)
+      return response.username
+    } catch (err) {
+      return err.message
+    }
+  }
 }
 
 module.exports = Zabo;
