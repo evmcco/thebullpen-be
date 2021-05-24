@@ -26,7 +26,7 @@ class Follows {
   static async getAllUserFollows(username) {
     //get all follows for a username
     try {
-      const response = await db.any('select * from follows where follower_username = ($1)', [username])
+      const response = await db.any('select * from follows where follower_username = ($1) order by date_added desc', [username])
       return response
     } catch (err) {
       return err.message
@@ -35,7 +35,7 @@ class Follows {
   static async getAllUserFollowers(username) {
     //get all followers for a username
     try {
-      const response = await db.any('select * from follows where followee_username = ($1)', [username])
+      const response = await db.any('select * from follows where followee_username = ($1) order by date_added desc', [username])
       return response
     } catch (err) {
       return err.message
