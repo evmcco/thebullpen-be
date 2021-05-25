@@ -24,4 +24,10 @@ router.get("/leaderboard/today", async (req, res, next) => {
   res.json(response).status(200)
 })
 
+router.get("/today/:username", async (req, res, next) => {
+  let username = req.params.username
+  const dailyPerformance = await performanceModel.getUserDailyPerformance(username)
+  res.json(dailyPerformance).status(200)
+})
+
 module.exports = router;

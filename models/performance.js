@@ -20,6 +20,14 @@ class Performance {
       return err.message
     }
   }
+  static async getUserDailyPerformance(username) {
+    try {
+      const response = await db.one("select DISTINCT * from performance where date = (select max(date) from performance) AND username = ($1)", [username])
+      return response
+    } catch (err) {
+      return err.message
+    }
+  }
 }
 
 module.exports = Performance;
