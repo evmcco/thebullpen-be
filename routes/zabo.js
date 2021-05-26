@@ -80,7 +80,7 @@ router.post('/save_account_id', async function (req, res, next) {
     accountId,
   })
   //save the transactions
-  const txnsSaveResponse = await zaboTransactionsModel.saveTransactions(req.body.username, accountId, txnsResponse.data)
+  const txnsSaveResponse = await zaboTransactionsModel.saveTransactions(req.body.username, accountId, txnsResponse)
 });
 
 router.get('/user/accounts/:username', async function (req, res, next) {
