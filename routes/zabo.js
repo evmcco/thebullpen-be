@@ -12,7 +12,7 @@ const initZabo = async () => {
   const zaboClient = await Zabo.init({
     apiKey: process.env.ZABO_SANDBOX_API_KEY,
     secretKey: process.env.ZABO_SANDBOX_SECRET_API_KEY,
-    env: 'sandbox'
+    env: 'live'
   })
   return zaboClient
 }
