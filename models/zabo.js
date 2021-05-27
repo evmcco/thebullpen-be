@@ -27,6 +27,15 @@ class Zabo {
       return err.message
     }
   }
+
+  static async deleteZaboAccount(accountId) {
+    try {
+      const response = await db.none("delete from zabo_accounts where account_id = $1", accountId)
+      return response.username
+    } catch (err) {
+      return err.message
+    }
+  }
 }
 
 module.exports = Zabo;

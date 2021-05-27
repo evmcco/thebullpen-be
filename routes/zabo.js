@@ -25,6 +25,7 @@ router.get('/', async function (req, res, next) {
 });
 
 async function getAllZaboTransactions(params) {
+  //call the transactions endpoint until theres a response, then get the entire history
   const transactions = []
 
   let page
@@ -65,7 +66,7 @@ router.post('/save_account_id', async function (req, res, next) {
   }
   const userId = zaboUser.id
   const accountId = req.body.account.id
-  //save account DO I NEED TO DO THIS?
+  //save account to the database DO I NEED TO DO THIS?
   await zaboModel.saveAccount(req.body.username, userId, accountId, req.body.account.provider.name, req.body.account.provider.logo)
   //get the account balances
   const balsResponse = await zabo.users.getBalances({
@@ -97,10 +98,9 @@ router.get('/user/accounts/:username', async function (req, res, next) {
 
 router.delete('/user/:user_id/accounts/:account_id', async function (req, res, next) {
   const zabo = await initZabo()
-  console.log(req.params)
   try {
-    const response = await zabo.users.removeAccount({ userId: req.params.user_id, accountId: req.params.account_id })
-    console.log(response)
+    await zabo.users.removeAccount({ userId: req.params.user_id, accountId: req.params.account_id })
+    await zaboModel.deleteZaboAccount(req.params.account_id)
     res.json(response).status(200)
   } catch {
     res.sendStatus(400)
