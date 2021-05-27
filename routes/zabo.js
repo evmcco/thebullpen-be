@@ -10,8 +10,8 @@ const zaboTransactionsModel = require("../models/zaboTransactions")
 
 const initZabo = async () => {
   const zaboClient = await Zabo.init({
-    apiKey: process.env.ZABO_SANDBOX_API_KEY,
-    secretKey: process.env.ZABO_SANDBOX_SECRET_API_KEY,
+    apiKey: process.env.ZABO_LIVE_API_KEY,
+    secretKey: process.env.ZABO_LIVE_SECRET_API_KEY,
     env: 'live'
   })
   return zaboClient
