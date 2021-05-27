@@ -75,13 +75,15 @@ router.post('/save_account_id', async function (req, res, next) {
   })
   //save the account balances
   const balsSaveResponse = await zaboBalancesModel.saveBalances(req.body.username, accountId, balsResponse.data)
+  console.log("Zabo Balances Save", balsSaveResponse)
   //get the transactions
   const txnsResponse = await getAllZaboTransactions({
     userId,
     accountId,
   })
   //save the transactions
-  const txnsSaveResponse = await zaboTransactionsModel.saveTransactions(req.body.username, accountId, txnsResponse)
+  const txnsUpsertResponse = await zaboTransactionsModel.upsertTransactions(req.body.username, accountId, txnsResponse)
+  console.log("Zabo Transactions Upsert", txnsUpsertResponse)
 });
 
 router.get('/user/accounts/:username', async function (req, res, next) {
