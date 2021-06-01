@@ -24,13 +24,13 @@ router.get('/', async function (req, res, next) {
   console.log(myTeam)
 });
 
-async function getAllZaboTransactions(params) {
+async function getAllZaboTransactions(params, zaboClient) {
   //call the transactions endpoint until theres a response, then get the entire history
   const transactions = []
 
   let page
   while (true) {
-    const resp = await (page ? page.next() : zabo.transactions.getList(params))
+    const resp = await (page ? page.next() : zaboClient.transactions.getList(params))
 
     const list = resp.data || []
     const delay = resp.delay * 1000 // ms
@@ -52,7 +52,7 @@ router.post('/save_account_id', async function (req, res, next) {
   const zabo = await initZabo()
   //check DB to see if user has a zabo connection and user_id already, if so add the account to the existing user instead
   const zaboUserId = await zaboModel.getZaboUserId(req.body.username)
-  if (zaboUserId !== "No data returned from the query.") {
+  if (!!zaboUserId) {
     var zaboUser = await zabo.users.getOne(zaboUserId)
     try {
       await zabo.users.addAccount(zaboUser, req.body.account)
@@ -73,17 +73,17 @@ router.post('/save_account_id', async function (req, res, next) {
     userId,
     accountId
   })
+  //delete balances for the account (just in case)
+  const balancesDeleteResponse = await zaboBalancesModel.deleteBalancesForAccount(accountId)
   //save the account balances
   const balsSaveResponse = await zaboBalancesModel.saveBalances(req.body.username, accountId, balsResponse.data)
-  console.log("Zabo Balances Save", balsSaveResponse)
   //get the transactions
   const txnsResponse = await getAllZaboTransactions({
     userId,
     accountId,
-  })
+  }, zabo)
   //save the transactions
   const txnsUpsertResponse = await zaboTransactionsModel.upsertTransactions(req.body.username, accountId, txnsResponse)
-  console.log("Zabo Transactions Upsert", txnsUpsertResponse)
 });
 
 router.get('/user/accounts/:username', async function (req, res, next) {
@@ -114,13 +114,13 @@ router.post('/webhook', async function (request, response, next) {
   const webhookSaveResponse = await webhooksModel.saveWebhook(request.body)
   if (req.body.event === "transactions.update") {
     const accountId = req.body.data.account_id
+    const username = await zaboModel.getUsernameFromAccountId(accountId)
     //delete balances for the account 
     const balancesDeleteResponse = await zaboBalancesModel.deleteBalancesForAccount(accountId)
     //save the new balances to the account
-    const username = await zaboModel.getUsernameFromAccountId(accountId)
     const balsSaveResponse = await zaboBalancesModel.saveBalances(username, accountId, req.body.data.balances)
     //save transactions for the account
-    const txnsSaveResponse = await zaboTransactionsModel.saveTransactions(username, accountId, req.body.data.transactions)
+    const txnsSaveResponse = await zaboTransactionsModel.upsertTransactions(username, accountId, req.body.data.transactions)
   }
 })
 

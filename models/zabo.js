@@ -11,11 +11,19 @@ class Zabo {
   }
   //get accounts for a user
   static async getZaboUserId(username) {
-    try {
-      const response = await db.one('select distinct user_id from zabo_accounts where username = ($1)', username)
-      return response.user_id
-    } catch (err) {
-      return err.message
+    //check if user has a zabo connection yet
+    const doesUserHaveZaboId = await db.one("select exists(select 1 from zabo_accounts where username = ($1))", username)
+    //if so, get the user_id
+    if (doesUserHaveZaboId.exists) {
+      try {
+        const response = await db.one('select distinct user_id from zabo_accounts where username = ($1)', username)
+        return response.user_id
+      } catch (err) {
+        return err.message
+      }
+      //if not, return false
+    } else {
+      return false
     }
   }
 
