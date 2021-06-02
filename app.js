@@ -14,6 +14,7 @@ const bullpensRouter = require("./routes/bullpens")
 const supportRouter = require("./routes/support")
 const groupsRouter = require("./routes/groups")
 const performanceRouter = require("./routes/performance")
+const followsRouter = require("./routes/follows")
 
 const cors = require("cors");
 
@@ -50,6 +51,7 @@ app.use("/bullpens", bullpensRouter);
 app.use("/support", supportRouter)
 app.use("/groups", groupsRouter)
 app.use("/performance", performanceRouter)
+app.use("/follows", followsRouter)
 
 
 module.exports = app;
