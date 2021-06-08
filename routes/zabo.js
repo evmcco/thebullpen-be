@@ -66,7 +66,7 @@ router.post('/save_account_id', async function (req, res, next) {
   }
   const userId = zaboUser.id
   const accountId = req.body.account.id
-  //save account to the database DO I NEED TO DO THIS?
+  //save account to the database
   await zaboModel.saveAccount(req.body.username, userId, accountId, req.body.account.provider.name, req.body.account.provider.logo)
   //get the account balances
   const balsResponse = await zabo.users.getBalances({
@@ -84,15 +84,21 @@ router.post('/save_account_id', async function (req, res, next) {
   }, zabo)
   //save the transactions
   const txnsUpsertResponse = await zaboTransactionsModel.upsertTransactions(req.body.username, accountId, txnsResponse)
+  //TODO send response back to FE
 });
 
 router.get('/user/accounts/:username', async function (req, res, next) {
   const zabo = await initZabo()
   try {
     const zaboUserId = await zaboModel.getZaboUserId(req.params.username)
-    const zaboUser = await zabo.users.getOne(zaboUserId)
-    const userAccounts = zaboUser.accounts
-    res.json({ user_id: zaboUserId, accounts: userAccounts }).status(200)
+    if (!!zaboUserId) {
+      const zaboUser = await zabo.users.getOne(zaboUserId)
+      const userAccounts = zaboUser.accounts
+      res.json({ user_id: zaboUserId, accounts: userAccounts }).status(200)
+    } else {
+      res.json({ error: "No zabo connections" }).status(200)
+    }
+
   } catch {
     res.sendStatus(400)
   }
