@@ -93,7 +93,10 @@ router.post('/request/holdings', async function (request, response, next) {
 });
 
 router.post('/request/transactions', async function (request, response, next) {
-  const requestTransactionsResponse = await requestTransactions(request.body.plaid_access_token, request.body.username)
+  let token = request.body.plaid_access_token
+  let username = request.body.username
+  const requestTransactionsResponse = await requestTransactions(token, username)
+  // console.log(requestTransactionsResponse)
   response.status(200).json(requestTransactionsResponse)
 });
 

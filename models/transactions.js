@@ -12,6 +12,15 @@ class Transactions {
       return err.message;
     }
   }
+  static async getAllTransactions() {
+    const startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
+    try {
+      const response = await db.any("select to_char(t.date, 'YYYY-MM-DD') as date, t.investment_transaction_id, t.username, t.price, t.type as txn_type, t.subtype, s.unofficial_currency_code, s.ticker_symbol, s.type from investment_transactions t join securities s on t.security_id = s.security_id where t.date > ($1) and t.type in ('buy', 'sell') and s.ticker_symbol is not null order by t.date desc, s.ticker_symbol asc, t.subtype asc", [startDate]);
+      return response;
+    } catch (err) {
+      return err.message;
+    }
+  }
 
   static async saveTransactions(username, transactions) {
     // add user_id to each holding object
@@ -37,7 +46,7 @@ class Transactions {
     transactions.forEach(transaction => {
       transaction.username = username
     })
-    db.tx(t => {
+    await db.tx(t => {
       const queries = transactions.map(transaction => {
         return t.none('insert into investment_transactions (investment_transaction_id, username, cancel_transaction_id, account_id, security_id, date, name, quantity, amount, price, fees, type, subtype, iso_currency_code, unofficial_currency_code) values (${investment_transaction_id}, ${username}, ${cancel_transaction_id}, ${account_id}, ${security_id}, ${date}, ${name}, ${quantity}, ${amount}, ${price}, ${fees}, ${type}, ${subtype}, ${iso_currency_code}, ${unofficial_currency_code}) on conflict (investment_transaction_id) do nothing'
           , transaction);

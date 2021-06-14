@@ -15,6 +15,7 @@ const supportRouter = require("./routes/support")
 const groupsRouter = require("./routes/groups")
 const performanceRouter = require("./routes/performance")
 const followsRouter = require("./routes/follows")
+const activityFeedRouter = require("./routes/activityFeed")
 
 const cors = require("cors");
 
@@ -52,6 +53,7 @@ app.use("/support", supportRouter)
 app.use("/groups", groupsRouter)
 app.use("/performance", performanceRouter)
 app.use("/follows", followsRouter)
+app.use("/activityFeed", activityFeedRouter)
 
 
 module.exports = app;

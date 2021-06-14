@@ -111,3 +111,30 @@ create table performance
   performance numeric not null,
   date timestamp not null
 )
+
+-- activity feed
+create table activity_feed (
+  id serial primary key,
+  date timestamp not null,
+  username VARCHAR(50) not null,
+  activity_type VARCHAR(50), -- 'transaction' || 'achievement' || 'big-mover',
+  activity jsonb not null,
+  investment_transaction_id VARCHAR UNIQUE,
+  -- reactions jsonb -- new table for reactions may be preferable - not yet implemented
+)
+-- activity jsonb format
+-- {
+--   "asset": "WEN",
+--   "type": "buy",
+--   "text": "evmcco bought a June 1st 2021 Wendy's call at a $30 strike price for $2",
+--   "ticker": "WEN080121C00003000",
+--   "parsedTicker": ["WEN", "08", "01", "21", "C", "00003000" ]
+-- }
+
+
+-- reactions jsonb format
+-- [
+--   {user: '1984', reaction: 'smile', date_time: '111084'}
+--   {user: '1984', reaction: 'thumbs-up', date_time: '111184'},
+--   {user: 'evmcco', reaction: 'haha', date_time: '121183'},
+-- ]

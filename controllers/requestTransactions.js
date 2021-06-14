@@ -3,6 +3,7 @@ const requestTransactions = async (access_token, username) => {
   const moment = require('moment');
   const securitiesModel = require("../models/securities");
   const transactionsModel = require("../models/transactions");
+  const ActivityFeed = require("../controllers/activityFeed")
   //init plaid client
   const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
   const PLAID_ENV = process.env.PLAID_ENV || 'sandbox';
@@ -31,6 +32,8 @@ const requestTransactions = async (access_token, username) => {
       //upsert
       const transactionsUpsertResponse = await transactionsModel.upsertTransactions(username, investmentTransactionsResponse.investment_transactions)
       const securitiesUpsertResponse = await securitiesModel.upsertSecurities(investmentTransactionsResponse.securities);
+      await ActivityFeed.addPlaidTransactions()
+
       return { transactionsUpsertResponse, securitiesUpsertResponse }
     },
   );
